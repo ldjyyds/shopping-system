@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ProductMapper">
+    <update id="update">
+        update product
+        <set>
+            <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
+            <if test="name != null">name=#{name},</if>
+            <if test="model != null">model=#{model},</if>
+            <if test="retailPrice != null"> retail_price=#{retailPrice},</if>
+            <if test="purchasePrice != null"> purchase_price=#{purchasePrice},</if>
+            <if test="date != null">date=#{date},</if>
+            <if test="quantity != null"> quantity=#{quantity},</if>
+            <if test="updateTime != null"> update_time=#{updateTime}</if>
+        </set>
+        --         这里的set标签可以自动的将多余的逗号去除掉。
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from product where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+            --          这个就是每次遍历出来的元素，也就是id
+        </foreach>
+    </delete>
+
+    <select id="list" resultType="com.example.pojo.Product">
+        select *
+        from product
+        <where>
+            <if test="name !=null">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="manufacturer !=null">
+                and manufacturer=#{manufacturer}
+            </if>
+            <if test="begin!=null and end != null">
+                and date between #{begin} and #{end}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.GuestMapper">
+    <update id="update">
+        update guest
+        <set>
+            <if test="account != null">account=#{account},</if>
+            <if test="name != null">name=#{name},</if>
+            <if test="level != null">level=#{level},</if>
+            <if test="amount != null"> amount=#{amount},</if>
+            <if test="telephone != null"> telephone=#{telephone},</if>
+            <if test="email != null">email=#{email},</if>
+            <if test="code != null"> code=#{code},</if>
+            <if test="updateTime != null"> update_time=#{updateTime}</if>
+        </set>
+        --         这里的set标签可以自动的将多余的逗号去除掉。
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete
+        from guest
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="list" resultType="com.example.pojo.Guest">
+        select *
+        from guest
+        <where>
+            <if test="name !=null">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="telephone !=null">
+                and telephone = #{telephone}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+</mapper>
